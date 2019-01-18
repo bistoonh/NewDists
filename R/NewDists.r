@@ -133,7 +133,8 @@ viewGOGaG = function()
 		
 		par(mfrow = c(1,2))
 			plot(x, dd, type="l", lwd = 3, col = '#5B9BD5', ylab = "Density")
-			plot(x, hd, type="l", lwd = 3, col = '#ED7D31', ylab = "Hazard", xlim = c(par[3], xmax))
+			if(base == "Uniform") plot(x, hd, type="l", lwd = 3, col = '#ED7D31', ylab = "Hazard", xlim = c(par[3], xmax))
+			if(base == "Weibull") plot(x, hd, type="l", lwd = 3, col = '#ED7D31', ylab = "Hazard", xlim = c(0, xmax))
 		par(mfrow = c(1,1))
 		}
 	manipulate(fhGOGaG(c(par1, par2, par3, par4), xmax, base),
