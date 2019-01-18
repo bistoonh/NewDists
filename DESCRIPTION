@@ -1,0 +1,14 @@
+Type: Package
+Package: NewDists
+Title: The GOGaG and EEG family of distributions.
+Version: 0.1.0
+Authors: Bistoon Hosseini, Mahmoud Afshari
+Maintainer: Bistoon Hosseini <bistoon.hosseini@gmail.com>
+Depends: R (>= 3.1.2), rjags, manipulate
+Description: This package performs computations for GOGaG and EEG family of distributions.
+License:  GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr

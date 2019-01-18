@@ -1,0 +1,12 @@
+setwd("C:/Users/BistoonHome/Documents/NewDists")
+system(
+    "
+    R CMD Rd2pdf . --output=./NewDists.pdf
+    --title=Package NewDists
+    --force
+    --no-clean
+    --internals
+    "
+)
+
+
