@@ -22,6 +22,26 @@ dEEN = function(x, alpha, beta, mu = 0, sigma = 1, log = FALSE)
 	if(log == TRUE) d = log(d)
 	return(d)
 	}
+	
+dLEEW = function(x, alpha, beta, mu = 0, sigma = 1, log = FALSE)
+	{
+	z = (x - mu)/sigma
+	u = 1 - exp(-exp(z))
+	d = exp(z - exp(z)) * u^(alpha-1) * (alpha + (beta - alpha)*u^beta) / (sigma * (u^alpha + 1 - u^beta)^2)
+	d[!is.finite(d)] = NA
+	if(log == TRUE) d = log(d)
+	return(d)
+	}
+	
+pLEEW = function(x, alpha, beta, mu = 0, sigma = 1, log = FALSE)
+	{
+	z = (x - mu)/sigma
+	u = 1 - exp(-exp(z))
+	d = u^alpha / (u^alpha + 1 - u^beta)
+	d[!is.finite(d)] = NA
+	if(log == TRUE) d = log(d)
+	return(d)
+	}
 
 pGOGaU = function(x, alpha, beta, a, b)
 	{
@@ -150,7 +170,7 @@ viewGOGaG = function()
 
 viewEEG = function()
 	{
-	fhGOGaG = function(par, xmax = 10, base = "Normal")
+	fhEEG = function(par, xmax = 10, base = "Normal")
 		{
 		if(base == "Normal") 
 			{
@@ -201,11 +221,61 @@ viewEEG = function()
 			plot(x, hd, type="l", lwd = 3, col = '#ED7D31', ylab = "Hazard", xlim = c(min(x), xmax))
 		par(mfrow = c(1,1))
 		}
-	manipulate(fhGOGaG(c(par1, par2, par3, par4), xmax, base),
+	manipulate(fhEEG(c(par1, par2, par3, par4), xmax, base),
 				base = picker("Normal", "Weibull", initial="Normal"),
 				xmax = slider(0, 30, initial = 1, label = "Max of x", step=.01),
 				par1 = slider(0, 10, initial = .5, label = "alpha", step=.01),
 				par2 = slider(0, 10, initial = 1.5, label = "beta", step=.01),
+				par3 = slider(-10, 10, initial = 0, label = "mu", step=0.01),
+				par4 = slider(0, 10, initial = 1, label = "sigma", step=0.01)
+			)
+
+	}
+
+viewLEEW = function()
+	{
+	fhLEEW = function(par)
+		{
+		x = seq(par[3] - 8 * par[4], par[3] + 5 *par[4], le = 1000)
+		pdf = function(par1)
+			{
+			alpha = par[1]; beta = par[2]; mu = par[3]; sigma = par[4]
+			z = (x - mu)/sigma
+			u = 1 - exp(-exp(z))
+			d = exp(z - exp(z)) * u^(alpha-1) * (alpha + (beta - alpha)*u^beta) / (sigma * (u^alpha + 1 - u^beta)^2)
+			d[!is.finite(d)] = NA
+			return(d)
+			}
+			
+		cdf = function(par)
+			{
+			alpha = par[1]; beta = par[2]; mu = par[3]; sigma = par[4]
+			z = (x - mu)/sigma
+			u = 1 - exp(-exp(z))
+			d = u^alpha / (u^alpha + 1 - u^beta)
+			d[!is.finite(d)] = NA
+			return(d)
+			}
+
+
+		S <- function(par)
+			{
+			d <- 1 - cdf(par)
+			d[!is.finite(d)] = NA
+			d
+			}
+		
+		dd = pdf(par)
+		Sd = S(par)
+	
+		par(mfrow = c(1,2))
+			plot(x, dd, type="l", lwd = 3, col = '#5B9BD5', ylab = "Density")
+			plot(x, Sd, type="l", lwd = 3, col = '#ED7D31', ylab = "Survival")
+		par(mfrow = c(1,1))
+		}
+	manipulate(fhLEEW(c(par1, par2, par3, par4)),
+				par1 = slider(0, 30, initial = 3, label = "alpha", step=.01),
+				par2 = slider(0, 30, initial = 25, label = "beta", step=.01),
 				par3 = slider(-10, 10, initial = 0, label = "mu", step=0.01),
 				par4 = slider(0, 10, initial = 1, label = "sigma", step=0.01)
 			)
@@ -493,6 +563,124 @@ mleEEN = function(x, par0 = c(1, 1, mean(x), sd(x)), fitplot = TRUE)
 					W = crs$W, A = crs$A, KS = crs$KS, AIC = crs$AIC,  BIC = crs$BIC))
 		}
 
+		
+mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
+	{
+	crLEEW = function(dfa, cfa ,parh, x)
+		{
+		x_orderdenados = sort(x)
+		v = cfa(x_orderdenados,parh)
+		v[v == 1] = 1
+		n = length(x)
+		p = length(parh)
+		loglikefn = function(x, par)  -sum(log(dfa(x, par)))
+		loglike = -1 * loglikefn(x, parh)
+		AIC = -2 * loglike + 2 * p
+		BIC = -2 * loglike + p * log(n)
+		KS = ks.test(x = x, y = "cfa", par = as.vector(parh))
+		return(list(KS = KS, AIC = AIC, BIC = BIC))
+		}
+	if(model == "LEEW") 
+		{
+		logdfa = function(y, par)
+			{
+			alpha = par[1]; beta = par[2]; mu = par[3]; sigma = par[4]
+			z = (y - mu)/sigma
+			u1 = 1 - exp(-exp(z))
+			ret = (z - exp(z) + (alpha - 1) * log(u1) + log(alpha + (beta - alpha) * u1^beta) -
+					log(sigma)- 2 * log(u1^alpha + 1 - u1^beta))
+			ret[!is.finite(ret)] = NA
+			return(ret)
+			}
+		findinit = function(r, y)
+			{
+			par0 = rep(NA, 4)
+			s = 0
+			i = 1
+			while(s == 0 & i < r)
+				{
+				par0 = c(runif(2, 0, 100), runif(1, mean(y) - 1*sd(y), mean(y) - 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
+				if(!is.na(logdfa(y, par0))) s = 1 else i = i+1
+				}
+			if(i == r) return(rep(NA, 4)) else return(par0)
+			}
+		bestopt = function(r = 100, y)
+			{
+			pars = t(replicate(r, findinit(10^3, y)))
+			f = function(par) -sum(logdfa(y, par))
+			optimvals = function(par0) optim(par0, f, method = "Nelder-Mead")$value
+			values = apply(pars, 1, optimvals)
+			t = which.min(values)
+			opt = optim(pars[t, ], f, method = "Nelder-Mead", control = list(maxit = 5000), hessian = T)
+			sdpar = sqrt(diag(-solve(-opt$hessian)))
+			return(list(par = opt$par, value = opt$value, convergence = opt$convergence, sdpar = sdpar))
+			}
+		opt = bestopt(r = 50, x)
+		parh = opt$par
+		if(fitplot == TRUE)
+			{
+			t = sort(x)
+			dd = exp(logdfa(t, c(parh[1],  parh[2], parh[3], parh[4])))
+			hist(x, prob = T, ylim=c(0,1.1*max(dd, na.rm = T)))
+			lines(t, dd, lwd = 2, col = '#5B9BD5')
+			}
+		dfa = function(x, parh) dLEEW(x, parh[1], parh[2], parh[3], parh[4])
+		cfa = function(x, parh) pLEEW(x, parh[1], parh[2], parh[3], parh[4])
+		crs = crLEEW(dfa=dfa, cfa=cfa, parh=parh, x = x)	
+		}
+	if(model == "LW")	
+		{
+		logdfa = function(y, par)
+			{
+			alpha =1; beta = 1; mu = par[1]; sigma = par[2]
+			z = (y - mu)/sigma
+			u1 = 1 - exp(-exp(z))
+			ret = (z - exp(z) + (alpha - 1) * log(u1) + log(alpha + (beta - alpha) * u1^beta) -
+					log(sigma)- 2 * log(u1^alpha + 1 - u1^beta))
+			ret[!is.finite(ret)] = NA
+			return(ret)
+			}
+		findinit = function(r, y)
+			{
+			par0 = rep(NA, 2)
+			s = 0
+			i = 1
+			while(s == 0 & i < r)
+				{
+				par0 = c(runif(1, mean(y) - 1*sd(y), mean(y) - 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
+				if(!is.na(logdfa(y, par0))) s = 1 else i = i+1
+				}
+			if(i == r) return(rep(NA, 2)) else return(par0)
+			}
+		bestopt = function(r = 100, y)
+			{
+			pars = t(replicate(r, findinit(10^3, y)))
+			f = function(par) -sum(logdfa(y, par))
+			optimvals = function(par0) optim(par0, f, method = "Nelder-Mead", control=list(maxit=5000))$value
+			values = apply(pars, 1, optimvals)
+			t = which.min(values)
+			opt = optim(pars[t, ], f, method = "Nelder-Mead", control = list(maxit = 5000), hessian = T)
+			sdpar = sqrt(diag(-solve(-opt$hessian)))
+			return(list(par = opt$par, value = opt$value, convergence = opt$convergence, sdpar = sdpar))
+			}
+		opt = bestopt(r = 20, x)
+		parh = opt$par
+		if(fitplot == TRUE)
+			{
+			t = sort(x)
+			dd = exp(logdfa(t, c(parh[1],  parh[2])))
+			hist(x, prob = T, ylim=c(0,1.1*max(dd, na.rm = T)))
+			lines(t, dd, lwd = 2, col = '#5B9BD5')
+			}
+		dfa = function(x, parh) dLEEW(x, 1, 1, parh[1], parh[2])
+		cfa = function(x, parh) pLEEW(x, 1, 1, parh[1], parh[2])
+		crs = crLEEW(dfa=dfa, cfa=cfa, parh=parh, x = x)	
+		}
+
+	return(list(par = opt$par, loglike = -opt$value, convergence = opt$convergence, 
+					KS = crs$KS, AIC = crs$AIC,  BIC = crs$BIC))
+	}
+		
 demo_JAGS_GOGaU = function()
 	{
 	load.module("GOGaU")
