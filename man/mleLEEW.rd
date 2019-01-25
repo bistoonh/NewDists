@@ -32,7 +32,8 @@ Communications in Statistics-Simulation and Computation (2018): 1-16.
 }
 \author{Bistoon Hosseini, Mahmoud Afshari}
 \examples{
-x = rweibull(n = 200, shape = 1.5, scale = 0.65)
+set.seed(100)
+x = runif(n = 200, 0, 10)
 x = log(x)
 mleLEEW(x, model = "LW", fitplot = TRUE)
 mleLEEW(x, model = "LEEW", fitplot = TRUE)
