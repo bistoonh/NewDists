@@ -578,7 +578,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 		AIC = -2 * loglike + 2 * p
 		BIC = -2 * loglike + p * log(n)
 		KS = ks.test(x = x, y = "cfa", par = as.vector(parh))
-		return(list(KS = KS, AIC = AIC, BIC = BIC))
+		return(list(KS = KS, AIC = AIC, BIC = BIC, loglike = loglike))
 		}
 	if(model == "LEEW") 
 		{
@@ -599,7 +599,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 			i = 1
 			while(s == 0 & i < r)
 				{
-				par0 = c(runif(2, 0, 100), runif(1, mean(y) - 1*sd(y), mean(y) - 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
+				par0 = c(runif(2, 0, 100), runif(1, mean(y) - 1*sd(y), mean(y) + 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
 				if(!is.na(logdfa(y, par0))) s = 1 else i = i+1
 				}
 			if(i == r) return(rep(NA, 4)) else return(par0)
@@ -607,6 +607,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 		bestopt = function(r = 100, y)
 			{
 			pars = t(replicate(r, findinit(10^3, y)))
+			pars[r, ] = c(1, 1, mean(y), sd(y))
 			f = function(par) -sum(logdfa(y, par))
 			optimvals = function(par0) optim(par0, f, method = "Nelder-Mead")$value
 			values = apply(pars, 1, optimvals)
@@ -615,7 +616,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 			sdpar = sqrt(diag(-solve(-opt$hessian)))
 			return(list(par = opt$par, value = opt$value, convergence = opt$convergence, sdpar = sdpar))
 			}
-		opt = bestopt(r = 50, x)
+		opt = bestopt(r = 150, x)
 		parh = opt$par
 		if(fitplot == TRUE)
 			{
@@ -658,7 +659,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 			i = 1
 			while(s == 0 & i < r)
 				{
-				par0 = c(runif(1, mean(y) - 1*sd(y), mean(y) - 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
+				par0 = c(runif(1, mean(y) - 1*sd(y), mean(y) + 1*sd(y)), runif(1, .5*sd(y), 2*sd(y)))
 				if(!is.na(logdfa(y, par0))) s = 1 else i = i+1
 				}
 			if(i == r) return(rep(NA, 2)) else return(par0)
@@ -699,7 +700,7 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 		crs = crLEEW(dfa=dfa, cfa=cfa, parh=parh, x = x)	
 		}
 
-	return(list(par = opt$par, loglike = -opt$value, convergence = opt$convergence, 
+	return(list(par = opt$par, loglike = crs$loglike, convergence = opt$convergence, 
 					KS = crs$KS, AIC = crs$AIC,  BIC = crs$BIC))
 	}
 		
