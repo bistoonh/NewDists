@@ -626,14 +626,13 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 				ems = 1 - ecdf(t)(t) 
 				hist(t, prob = T, ylim=c(0,1.1*max(dd, na.rm = T)))
 					lines(t, dd, lwd = 2, col = "#5B9BD5")
-				plot(t, ems, ylab = "S(y)", xlab = "y", type = "s", bty = "l")
-					lines(t, ds, ylab = "S(y)", xlab = "y", type = "l", col = "#ED7D31", lwd = 2)
-								legend(min(y), .4,
+				plot(t, ems, ylab = "Survival", type = "s", bty = "l")
+					lines(t, ds, type = "l", col = "#ED7D31", lwd = 2)
+								legend(min(x), .4,
 										c('Emprical Survival', 'LEEW'),
 										col = c('#5B9BD5', '#ED7D31'),
 										lwd = c(2, 2)
-										) 
-						
+										)
 			par(mfrow = c(1,1))
 			}
 		dfa = function(x, parh) dLEEW(x, parh[1], parh[2], parh[3], parh[4])
@@ -686,9 +685,9 @@ mleLEEW = function(x, model = "LEEW", fitplot = TRUE)
 				ems = 1 - ecdf(t)(t) 
 				hist(t, prob = T, ylim=c(0,1.1*max(dd, na.rm = T)))
 					lines(t, dd, lwd = 2, col = "#5B9BD5")
-				plot(t, ems, ylab = "S(y)", xlab = "y", type = "s", bty = "l")
-					lines(t, ds, ylab = "S(y)", xlab = "y", type = "l", col = "#ED7D31", lwd = 2)
-								legend(min(y), .4,
+				plot(t, ems, ylab = "Survival", type = "s", bty = "l")
+					lines(t, ds, type = "l", col = "#ED7D31", lwd = 2)
+								legend(min(x), .4,
 										c('Emprical Survival', 'LW'),
 										col = c('#5B9BD5', '#ED7D31'),
 										lwd = c(2, 2)
