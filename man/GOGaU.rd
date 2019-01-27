@@ -16,7 +16,7 @@ pGOGaU gives the distribution function,
 qGOGaU gives the quantile function,
 rGOGaU generates random deviates,
 mGOGaU gives the mean function,
-vGOGaU gives the varince function,
+vGOGaU gives the variance function,
 sGOGaU gives the skewness function,
 kGOGaU gives the kurtosis function, and
 entGOGaU gives the Rrnyi or Shannon entropy function due to Hosseini et al. (2018) specified by the pdf
@@ -53,7 +53,7 @@ An object of the same length as \code{x}, giving the pdf or cdf values computed 
 an object of the same length as \code{p}, giving the quantile values computed at \code{p} or
 an object of the same length as \code{n}, giving the random numbers generated or
 an object of the same length as \code{gamma}, giving the entropy (Rrnyi or Shannon) or
-an object giving the values of mean, varince, skewness, or kurtosis.
+an object giving the values of mean, variance, skewness, or kurtosis.
  }
 \references{Hosseini, Bistoon, Mahmoud Afshari, and Morad Alizadeh. "The Generalized Odd Gamma-G Family of Distributions: Properties and Applications." Austrian Journal of Statistics 47.2 (2018): 69-89.
 }

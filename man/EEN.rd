@@ -16,7 +16,7 @@ pEEN gives the distribution function,
 qEEN gives the quantile function,
 rEEN generates random deviates,
 mEEN gives the mean function,
-vEEN gives the varince function,
+vEEN gives the variance function,
 sEEN gives the skewness function,
 kEEN gives the kurtosis function, and
 entEEN gives the Rrnyi or Shannon entropy function due to Alizadeh et al. (2018) specified by the pdf
@@ -56,7 +56,7 @@ An object of the same length as \code{x}, giving the pdf or cdf values computed 
 an object of the same length as \code{p}, giving the quantile values computed at \code{p} or
 an object of the same length as \code{n}, giving the random numbers generated or
 an object of the same length as \code{gamma}, giving the entropy (Rrnyi or Shannon) or
-an object giving the values of mean, varince, skewness, or kurtosis.
+an object giving the values of mean, variance, skewness, or kurtosis.
  }
 \references{
 Alizadeh, Morad, Mahmoud Afshari, Bistoon Hosseini, and Thiago G. Ramires.
