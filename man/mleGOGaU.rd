@@ -14,9 +14,9 @@ mleGOGaU(x, par0 = c(1 , 1, min(x)-1, max(x)+1), a = NA, b = NA, fitplot = TRUE)
   \item{par0}{Initial values for the parameters to be optimized over.}
   \item{a, b}{Values for fixed lower or upper limits of the GOGaU distribution.
   If \code{a}/\code{b} is equal to \pkg{NA}, it is estimated as the unknown parameter.}
-  }
+  
   \item{fitplot}{logical; if TRUE, histogram and fitted GOGaU density is drawn.}
-
+	}
 \value{
   \item{par}{The MLEs of parameters.}
   \item{loglike}{The log-likelihood value corresponding to MLEs.}

@@ -13,7 +13,7 @@ mleEEN(x, par0 = c(1, 1, mean(x), sd(x)), fitplot = TRUE)
   \item{x}{The value of the first shape parameter. Must be finite.}
   \item{par0}{Initial values for the parameters to be optimized over.}
   \item{fitplot}{Logical; if TRUE, histogram and fitted EEN density is drawn.}
-
+	}
 \value{
   \item{par}{The MLEs of parameters.}
   \item{loglike}{The log-likelihood value corresponding to MLEs.}
