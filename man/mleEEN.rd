@@ -12,8 +12,6 @@ mleEEN(x, par0 = c(1, 1, mean(x), sd(x)), fitplot = TRUE)
 \arguments{
   \item{x}{The value of the first shape parameter. Must be finite.}
   \item{par0}{Initial values for the parameters to be optimized over.}
-  If \code{a}/\code{b} is equal to \pkg{NA}, it is estimated as the unknown parameter.}
-  }
   \item{fitplot}{Logical; if TRUE, histogram and fitted EEN density is drawn.}
 
 \value{
