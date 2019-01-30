@@ -380,7 +380,7 @@ entGOGaU = function(gamma, alpha, beta, a = 0, b = 1, explain = FALSE)
 	if(gamma !=1)
 		{
 		f <- function(x) dGOGaU(x, alpha, beta, a = a, b = b)^gamma
-		entf = log(integrate(f, subs$lower, subs$upper)$value)/(1-gamma)
+		entf = log(integrate(f, subs$lower, subs$upper)$value, 2)/(1-gamma)
 		if(explain == TRUE) print(paste("The Rrnyi Entropy =", entf))
 		} else{
 				f <- function(x)
@@ -401,7 +401,7 @@ entEEN = function(gamma, alpha, beta, mu = 0, sigma = 1, explain = FALSE)
 	if(gamma !=1)
 		{
 		f <- function(x) dEEN(x, alpha, beta, mu = mu, sigma = sigma)^gamma
-		entf = log(integrate(f, subs$lower-.1*sigma, subs$upper+.1*sigma)$value)/(1-gamma)
+		entf = log(integrate(f, subs$lower-.1*sigma, subs$upper+.1*sigma)$value, 2)/(1-gamma)
 		if(explain == TRUE) print(paste("The Rrnyi Entropy =", entf))
 		} else{
 				f <- function(x)
