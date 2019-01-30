@@ -386,7 +386,7 @@ entGOGaU = function(gamma, alpha, beta, a = 0, b = 1, explain = FALSE)
 				f <- function(x)
 					{
 					d = dGOGaU(x, alpha, beta, a = a, b = b)
-					return(-log(d) * d)
+					return(-log(d, 2) * d)
 					}
 				entf = integrate(f, subs$lower, subs$upper)$value
 				if(explain == TRUE) print(paste("The Shannon Entropy =", entf))
@@ -407,7 +407,7 @@ entEEN = function(gamma, alpha, beta, mu = 0, sigma = 1, explain = FALSE)
 				f <- function(x)
 					{
 					d = dEEN(x, alpha, beta, mu = mu, sigma = sigma)
-					return(-log(d) * d)
+					return(-log(d, 2) * d)
 					}
 				entf = integrate(f, subs$lower-.1*sigma, subs$upper+.1*sigma)$value
 				if(explain == TRUE) print(paste("The Shannon Entropy =", entf))
